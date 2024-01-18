@@ -24,6 +24,17 @@ data['status_published'] = pd.to_datetime(data['status_published'])
 
 # Plot 1: Line plot of the number of reactions over time
 def PlotLine_Reactions(data):
+    """ 
+    Plots a line graph to visualize the change in the number of reactions over time.
+    
+    Parameters:
+    - data (DataFrame): A pandas DataFrame containing at least two columns: 'status_type' representing
+                       the time variable and 'num_reactions' representing the number of reactions.
+
+    - Draws a plot  
+    
+    """
+
     plt.figure(figsize=(8, 6))
     plt.plot(data['status_type'], data['num_reactions'], label='Number of Reactions', marker='o')
     plt.title('Number of Reactions Over Time')
@@ -33,8 +44,23 @@ def PlotLine_Reactions(data):
     plt.show()
 
 
+PlotLine_Reactions(data)
+
+
 # Plot 2: Bar plot of the average number of reactions by status type
 def plotBar_ReactionsByStatus(data):
+
+
+    """
+    Plots a bar chart to visualize the average number of reactions based on the number of shares for each status type.
+
+    Parameters:
+    - data (DataFrame): A pandas DataFrame containing at least two columns: 'num_shares' representing the number of shares,
+                       and 'num_reactions' representing the number of reactions.
+
+    Returns:
+    None """
+
     average_reactions_by_type = data.groupby('num_shares')['num_reactions'].mean().sort_values(ascending=False)
     plt.figure(figsize=(8, 6))
     average_reactions_by_type.plot(kind='bar', color='tomato')
@@ -42,6 +68,10 @@ def plotBar_ReactionsByStatus(data):
     plt.xlabel('number of shares')
     plt.ylabel('Average Number of Reactions')
     plt.show()
+
+
+
+plotBar_ReactionsByStatus(data)
 
 # Select relevant columns for clustering
 features = data[['num_reactions', 'num_comments', 'num_shares']]
@@ -54,11 +84,27 @@ data['cluster_label'] = kmeans.fit_predict(normalized_features)
 
 # Plot cluster membership
 def PlotScatter_Membership(data):
+
+    """
+        Creates a scatter plot to visualize the clustering results based on the number of reactions and comments.
+
+        Parameters:
+        - data (DataFrame): A pandas DataFrame containing at least three columns: 'num_reactions' representing the number of reactions,
+                        'num_comments' representing the number of comments, and 'cluster_label' indicating the cluster membership.
+
+        Draws scatter plot 
+        None """
+
+
     plt.scatter(data['num_reactions'], data['num_comments'], c=data['cluster_label'], cmap='viridis', alpha=0.5)
     plt.title('Clustering Results')
     plt.xlabel('Number of Reactions')
     plt.ylabel('Number of Comments')
     plt.show()
+
+
+
+PlotScatter_Membership(data)
 
 
 # Plot cluster centers
@@ -71,6 +117,7 @@ def PlotScatter_Centers(data):
     plt.show()
 
 
+PlotScatter_Centers(data)
 
 data.drop(['Column1', 'Column2', 'Column3', 'Column4'], axis=1, inplace=True)
 data.info()
@@ -91,7 +138,6 @@ data.info()
 data.head()
 
 # Feature vector and Targtet Variable 
-
 X = data
 y = data['status_type']
 
@@ -128,16 +174,17 @@ print('Accuracy score: {0:0.2f}'. format(correct_labels/float(y.size)))
 
 
 #Using elbow method to find optimal number of clusters 
-cs = []
-for i in range(1, 11):
-    kmeans = KMeans(n_clusters = i, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
-    kmeans.fit(X)
-    cs.append(kmeans.inertia_)
-plt.plot(range(1, 11), cs)
-plt.title('The Elbow Method')
-plt.xlabel('Number of clusters')
-plt.ylabel('CS')
-plt.show()
+def plotElbow_no():
+    cs = []
+    for i in range(1, 11):
+        kmeans = KMeans(n_clusters = i, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
+        kmeans.fit(X)
+        cs.append(kmeans.inertia_)
+    plt.plot(range(1, 11), cs)
+    plt.title('The Elbow Method')
+    plt.xlabel('Number of clusters')
+    plt.ylabel('CS')
+    plt.show()
 
 # Result with Two clusters 
 kmeans = KMeans(n_clusters=2,random_state=0)
