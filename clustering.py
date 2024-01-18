@@ -6,11 +6,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import KMeans
 
-
-
 #loading the dataset
 data = pd.read_csv("Live.csv")
-
 
 #Display basic statistics and information about the dataset
 print(data.describe())
@@ -158,6 +155,16 @@ print('Accuracy score: {0:0.2f}'. format(correct_labels/float(y.size)))
 
 # Result with Three Clusters 
 kmeans = KMeans(n_clusters=3, random_state=0)
+kmeans.fit(X)
+
+# check how many of the samples were correctly labeled
+labels = kmeans.labels_
+correct_labels = sum(y == labels)
+print("Result: %d out of %d samples were correctly labeled." % (correct_labels, y.size))
+print('Accuracy score: {0:0.2f}'. format(correct_labels/float(y.size)))
+
+# Resukt with 4 Clusters 
+kmeans = KMeans(n_clusters=4, random_state=0)
 kmeans.fit(X)
 
 # check how many of the samples were correctly labeled
