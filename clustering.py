@@ -23,69 +23,65 @@ print(data['status_type'].value_counts())
 data['status_published'] = pd.to_datetime(data['status_published'])
 
 # Plot 1: Line plot of the number of reactions over time
-plt.figure(figsize=(8, 6))
-plt.plot(data['status_type'], data['num_reactions'], label='Number of Reactions', marker='o')
-plt.title('Number of Reactions Over Time')
-plt.xlabel('Time')
-plt.ylabel('Number of Reactions')
-plt.legend()
-plt.show()
+def PlotLine_Reactions(data):
+    plt.figure(figsize=(8, 6))
+    plt.plot(data['status_type'], data['num_reactions'], label='Number of Reactions', marker='o')
+    plt.title('Number of Reactions Over Time')
+    plt.xlabel('Time')
+    plt.ylabel('Number of Reactions')
+    plt.legend()
+    plt.show()
 
 
 # Plot 2: Bar plot of the average number of reactions by status type
-average_reactions_by_type = data.groupby('num_shares')['num_reactions'].mean().sort_values(ascending=False)
-plt.figure(figsize=(8, 6))
-average_reactions_by_type.plot(kind='bar', color='tomato')
-plt.title('Average Number of Reactions by Status Type')
-plt.xlabel('number of shares')
-plt.ylabel('Average Number of Reactions')
-plt.show()
+def plotBar_ReactionsByStatus(data):
+    average_reactions_by_type = data.groupby('num_shares')['num_reactions'].mean().sort_values(ascending=False)
+    plt.figure(figsize=(8, 6))
+    average_reactions_by_type.plot(kind='bar', color='tomato')
+    plt.title('Average Number of Reactions by Status Type')
+    plt.xlabel('number of shares')
+    plt.ylabel('Average Number of Reactions')
+    plt.show()
 
 # Select relevant columns for clustering
 features = data[['num_reactions', 'num_comments', 'num_shares']]
-
 normalized_features = (features - features.mean()) / features.std()
+
 # Apply K-means clustering
 kmeans = KMeans(n_clusters=3, random_state=42)
 data['cluster_label'] = kmeans.fit_predict(normalized_features)
 
 
 # Plot cluster membership
-plt.scatter(data['num_reactions'], data['num_comments'], c=data['cluster_label'], cmap='viridis', alpha=0.5)
-plt.title('Clustering Results')
-plt.xlabel('Number of Reactions')
-plt.ylabel('Number of Comments')
-plt.show()
+def PlotScatter_Membership(data):
+    plt.scatter(data['num_reactions'], data['num_comments'], c=data['cluster_label'], cmap='viridis', alpha=0.5)
+    plt.title('Clustering Results')
+    plt.xlabel('Number of Reactions')
+    plt.ylabel('Number of Comments')
+    plt.show()
 
 
 # Plot cluster centers
-plt.scatter(data['num_reactions'], data['num_comments'], c=data['cluster_label'], cmap='viridis', alpha=0.5)
-plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], c='red', marker='X', s=200)
-plt.title('Clustering Results with Centers')
-plt.xlabel('Number of Reactions')
-plt.ylabel('Number of Comments')
-plt.show()
+def PlotScatter_Centers(data):
+    plt.scatter(data['num_reactions'], data['num_comments'], c=data['cluster_label'], cmap='viridis', alpha=0.5)
+    plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], c='red', marker='X', s=200)
+    plt.title('Clustering Results with Centers')
+    plt.xlabel('Number of Reactions')
+    plt.ylabel('Number of Comments')
+    plt.show()
+
+
 
 data.drop(['Column1', 'Column2', 'Column3', 'Column4'], axis=1, inplace=True)
 data.info()
 data.describe()
 
-# view the labels in the variable
+# view  how many different types of variables are there
 data['status_id'].unique()
-
-# view how many different types of variables are there
 len(data['status_id'].unique())
-
-# view the labels in the variable
 data['status_published'].unique()
-
-# view how many different types of variables are there
 len(data['status_published'].unique())
-
-# view the labels in the variable
 data['status_type'].unique()
-
-# view how many different types of variables are there
 len(data['status_type'].unique())
 
 
