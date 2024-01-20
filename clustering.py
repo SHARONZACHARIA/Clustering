@@ -5,22 +5,37 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 
-#loading the dataset
-data = pd.read_csv("Live.csv")
 
-#Display basic statistics and information about the dataset
-print(data.describe())
-print(data.info())
+dataPath = 'Live.csv'
 
-# Missing values 
-print(data.isnull().sum())
+#Fucntion to load the dataset
+def readDataset(path):
+    data = pd.read_csv(path)
+    return data 
+    
+data = readDataset(dataPath)
 
-# Explore unique values in categorical columns
-print(data['status_type'].value_counts())
 
-# Convert 'status_published' column to datetime
-data['status_published'] = pd.to_datetime(data['status_published'])
+def CleanTransposeData(data):
+    print(data['status_type'].value_counts())   
+    # Convert 'status_published' column to datetime
+    data['status_published'] = pd.to_datetime(data['status_published'])
+    # Missing values 
+    print(data.isnull().sum())
+    #Display basic statistics and information about the dataset
+    print(data.describe())
+    print(data.info())
+    data.drop(['Column1', 'Column2', 'Column3', 'Column4'], axis=1, inplace=True)
+    data.info()
+    data.describe()
+    
+
+CleanTransposeData(data)
+
+
+
 
 # Plot 1: Line plot of the number of reactions over time
 def PlotLine_Reactions(data):
@@ -73,6 +88,8 @@ def plotBar_ReactionsByStatus(data):
 
 plotBar_ReactionsByStatus(data)
 
+
+
 # Select relevant columns for clustering
 features = data[['num_reactions', 'num_comments', 'num_shares']]
 normalized_features = (features - features.mean()) / features.std()
@@ -81,6 +98,9 @@ normalized_features = (features - features.mean()) / features.std()
 kmeans = KMeans(n_clusters=3, random_state=42)
 data['cluster_label'] = kmeans.fit_predict(normalized_features)
 
+# Silhouette Score
+score = silhouette_score(normalized_features, data['cluster_label'])
+print("silhouette score is {})".format(score))
 
 # Plot cluster membership
 def PlotScatter_Membership(data):
@@ -119,9 +139,6 @@ def PlotScatter_Centers(data):
 
 PlotScatter_Centers(data)
 
-data.drop(['Column1', 'Column2', 'Column3', 'Column4'], axis=1, inplace=True)
-data.info()
-data.describe()
 
 # view  how many different types of variables are there
 data['status_id'].unique()
@@ -186,6 +203,9 @@ def plotElbow_no():
     plt.ylabel('CS')
     plt.show()
 
+
+plotElbow_no()
+
 # Result with Two clusters 
 kmeans = KMeans(n_clusters=2,random_state=0)
 kmeans.fit(X)
@@ -215,4 +235,3 @@ labels = kmeans.labels_
 correct_labels = sum(y == labels)
 print("Result: %d out of %d samples were correctly labeled." % (correct_labels, y.size))
 print('Accuracy score: {0:0.2f}'. format(correct_labels/float(y.size)))
-
